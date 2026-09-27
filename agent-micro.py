@@ -47,32 +47,21 @@ class LLM:
 AGENT_PROMPT_TEMPLATE = """
 You are an agent that completes the user's task by using tools.
 
-USER TASK:
-{prompt}
+USER TASK: {prompt}
 
-RESPONSE:
-You must respond with exactly one JSON object and no other text.
-
-To call a tool:
-{{"type": "tool", "name": <function_name>, "kwargs": <dict of keyword args>}}
-
+RESPONSE: You must respond with exactly one JSON object and no other text. To call a tool:
+  {{"type": "tool", "name": <function_name>, "kwargs": <dict of keyword args>}}
 When and only when you have enough information to answer the user's task:
-{{"type": "final", "text": <your answer>}}
+  {{"type": "final", "text": <your answer>}}
 
 <your answer> should be a string which answers the user prompt.
 
-HISTORY:
-  {interaction_history}
+HISTORY: {interaction_history}
 
 AVAILABLE TOOLS:
-  list_files(path=".")
-  Returns files and directories directly inside path.
-
-  read_file(path)
-  Returns the full contents of the file at path.
-
-  write_file(path, contents)
-  Writes contents to path and returns "ok".
+  list_files(path=".")         Returns files and directories directly inside path.
+  read_file(path)              Returns the full contents of the file at path.
+  write_file(path, contents)   Writes contents to path and returns "ok".
 
 Returns files and directories directly inside path.
 """
@@ -109,7 +98,7 @@ def run_agent(prompt: str, model: LLM, tools: dict, max_actions: int) -> str:
     return history
 
 
-# User input ---------------------------------------------------------------------------------------
+# Main program -------------------------------------------------------------------------------------
 
 # Example usage: uv run python main.py "Summarize the contents of agent-micro.py"
 if __name__ == "__main__":
