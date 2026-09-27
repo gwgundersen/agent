@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 import sys
 from typing import Callable
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Tools --------------------------------------------------------------------------------------------
@@ -53,7 +52,7 @@ When and only when you have enough information to answer the user's task:
 
 <your answer> should be a string which answers the user prompt.
 
-HISTORY: {interaction_history}
+HISTORY: {history}
 
 AVAILABLE TOOLS:
   list_files(path=".")         Returns files and directories directly inside path.
@@ -66,9 +65,7 @@ Returns files and directories directly inside path.
 def step(prompt: str, model: LLM, tools: dict[str, Callable], history: list[dict]) -> dict:
     """Single agentic "step": feed prompt, tools, and action history into LLM and get response."""
     # Construct agent prompt from user prompt and agent action history
-    agent_prompt = AGENT_PROMPT_TEMPLATE.format(
-        prompt=prompt, interaction_history=json.dumps(history)
-    )
+    agent_prompt = AGENT_PROMPT_TEMPLATE.format(prompt=prompt, history=json.dumps(history))
     # Feed prompt into LLM
     raw = model(agent_prompt)
     # Parse agent response into structured output
@@ -101,5 +98,4 @@ if __name__ == "__main__":
     tools =  {"list_files": list_files, "read_file": read_file, "write_file": write_file}
     actions = run_agent(prompt, model, tools, max_actions=10)
     for node in actions:
-        print("=" * 100)
-        print(node)
+        print(f"{'=' * 100}\n{node}")
