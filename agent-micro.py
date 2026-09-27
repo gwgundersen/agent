@@ -1,7 +1,5 @@
 import json
-from json.decoder import JSONDecodeError
 from pathlib import Path
-import re
 import sys
 from typing import Callable
 
@@ -80,12 +78,7 @@ Returns files and directories directly inside path.
 """
 
 
-def step(
-    prompt: str,
-    model: LLM,
-    tools: dict[str, Callable],
-    history: list[dict]
-) -> dict:
+def step(prompt: str, model: LLM, tools: dict[str, Callable], history: list[dict]) -> dict:
     """Single agentic "step": feed prompt, tools, and action history into LLM and get response."""
     # Construct agent prompt from user prompt and agent action history
     agent_prompt = AGENT_PROMPT_TEMPLATE.format(
@@ -104,7 +97,7 @@ def step(
         return {"response": resp, "result": resp["text"], "status": "terminate"}
 
 
-def run_agent(prompt: str, model: LLM, tools: dict, max_actions: int = 10) -> str:
+def run_agent(prompt: str, model: LLM, tools: dict, max_actions: int) -> str:
     """Run an 'agent', meaning call an LLM recursively with a set of tools and action history until
     the agent terminates or the max number of actions was taken."""
     history = []
@@ -123,7 +116,7 @@ if __name__ == "__main__":
     prompt = " ".join(sys.argv[1:])
     model = LLM()
     tools =  {"list_files": list_files, "read_file": read_file, "write_file": write_file}
-    history = run_agent(prompt, model, tools)
+    history = run_agent(prompt, model, tools, max_actions=10)
     for node in history:
         print("=" * 100)
         print(node)
