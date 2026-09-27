@@ -5,7 +5,6 @@ from typing import Callable
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-
 # Tools --------------------------------------------------------------------------------------------
 
 def list_files(path="."): return [str(p) for p in Path(path).iterdir()]
@@ -13,7 +12,6 @@ def list_files(path="."): return [str(p) for p in Path(path).iterdir()]
 def read_file(path): return Path(path).read_text()
 
 def write_file(path, contents): Path(path).write_text(contents)
-
 
 # Model --------------------------------------------------------------------------------------------
 
@@ -41,7 +39,6 @@ class LLM:
         generated = outputs[0, inputs.input_ids.shape[1]:]
         return self.tokenizer.decode(generated, skip_special_tokens=True)
 
-
 # Agentic loop -------------------------------------------------------------------------------------
 
 AGENT_PROMPT_TEMPLATE = """
@@ -66,7 +63,6 @@ AVAILABLE TOOLS:
 Returns files and directories directly inside path.
 """
 
-
 def step(prompt: str, model: LLM, tools: dict[str, Callable], history: list[dict]) -> dict:
     """Single agentic "step": feed prompt, tools, and action history into LLM and get response."""
     # Construct agent prompt from user prompt and agent action history
@@ -85,7 +81,6 @@ def step(prompt: str, model: LLM, tools: dict[str, Callable], history: list[dict
     else:
         return {"response": resp, "result": resp["text"], "status": "terminate"}
 
-
 def run_agent(prompt: str, model: LLM, tools: dict, max_actions: int) -> str:
     """Run an 'agent', meaning call an LLM recursively with a set of tools and action history until
     the agent terminates or the max number of actions was taken."""
@@ -97,7 +92,6 @@ def run_agent(prompt: str, model: LLM, tools: dict, max_actions: int) -> str:
             break
     return history
 
-
 # Main program -------------------------------------------------------------------------------------
 
 # Example usage: uv run python main.py "Summarize the contents of agent-micro.py"
@@ -105,7 +99,7 @@ if __name__ == "__main__":
     prompt = " ".join(sys.argv[1:])
     model = LLM()
     tools =  {"list_files": list_files, "read_file": read_file, "write_file": write_file}
-    history = run_agent(prompt, model, tools, max_actions=10)
-    for node in history:
+    actions = run_agent(prompt, model, tools, max_actions=10)
+    for node in actions:
         print("=" * 100)
         print(node)
