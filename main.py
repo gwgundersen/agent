@@ -214,9 +214,6 @@ def run_agent(prompt: str, model: LLM, tools: dict) -> str:
     """
     Run an 'agent', meaning call an LLM recursively with a set of tools and action history until the
     agent terminates or the max number of actions was taken.
-
-    Example usage:
-      uv run python main.py "Summarize the contents of agent.py"
     """
     history = []
     for i in range(MAX_ACTIONS):
@@ -233,6 +230,8 @@ def run_agent(prompt: str, model: LLM, tools: dict) -> str:
 # User input
 # --------------------------------------------------------------------------------------------------
 
+# Example usage:
+#   uv run python main.py "Summarize the contents of agent.py"
 if __name__ == "__main__":
     prompt = " ".join(sys.argv[1:])
     model = LLM()
