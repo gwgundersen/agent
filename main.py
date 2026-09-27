@@ -185,7 +185,6 @@ def _step(
             fn = tools[resp["name"]]
             result = fn(**resp["kwargs"])
             return {
-                "prompt": prompt,
                 "response": resp,
                 "result": result,
                 "status": "continue"
@@ -194,14 +193,18 @@ def _step(
         # Return answer
         else:
             return {
-                "prompt": prompt,
                 "response": resp,
                 "result": resp["text"],
                 "status": "terminate"
             }
     except ParsingError as e:
         if n_tries > 1:
-            # FIXME: Add failure to history
+            # Add error to history to see if LLM can error-correct usage
+            history.append({
+                "prompt": prompt,
+                "status": "failure",
+                "message": str(e)
+            })
             _step(prompt, model, tools, history, n_tries - 1)
         else:
             raise ValueError(f"failed to parse agent response in {max_tries} tries")
