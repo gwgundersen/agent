@@ -28,7 +28,7 @@ class LLM:
         self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_NAME)
         self.model = AutoModelForCausalLM.from_pretrained(
             self.MODEL_NAME, torch_dtype="auto", device_map="auto"
-        )    
+        )
 
     def __call__(self, prompt: str) -> str:
         """Get Gwen response from prompt."""
